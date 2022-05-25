@@ -1,5 +1,6 @@
 package com.example.firstdbdemo
 
+import android.app.Application
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,25 +13,30 @@ import androidx.recyclerview.widget.RecyclerView
 import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
-    val repo by lazy { StudentRepository(this)}
+    lateinit var  vm : ViewModel
+    lateinit var studenAdapter :StudentAdapter
+   // val repo by lazy { StudentRepository(this)}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
       val plusbutton:View =  findViewById(R.id.PlusButton)
         val recyclerview :RecyclerView = findViewById(R.id.Recycler)
-
+    vm= ViewModel(application)
+       var listStudent = ArrayList<Student>()
 //        var listStudent = ArrayList<Student>()
 //
 //        for(i in 1..20){
 //            listStudent.add(Student("a"+i,"b"+1, "A"))
 //        }
 
-       var  listStudent: MutableList<Student> = repo.getAllStudents() as MutableList<Student>
-
-        Log.d("ListStudent::" , "${listStudent.size}")
+       //var  listStudent: MutableList<Student> = repo.getAllStudents() as MutableList<Student>
+        vm.allstudents.observe(this) {
+            getallStudents(it, listStudent)
+        }
+       Log.d("ListStudent::" , "${listStudent.size}")
         recyclerview.layoutManager = LinearLayoutManager(this)
-        val studenAdapter = StudentAdapter(listStudent)
+         studenAdapter = StudentAdapter(listStudent)
         studenAdapter.setItemListener(object: StudentAdapter.onItemClickListener{
             override fun onClickListener(position: Int) {
                 var addStudent = Intent(this@MainActivity, AddStudent::class.java)
@@ -53,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Delete", "Swiped")
                 val position = viewHolder.adapterPosition;
                 val Student = listStudent.get(position);
-                repo.deleteStudent(Student);
+                vm.deletestudents(Student);
                 listStudent.removeAt(position);
                 recyclerview.adapter?.notifyItemRemoved(position)
                 Log.d("Delete", "${Student.StudentId} ${Student.FName}")
@@ -71,6 +77,13 @@ class MainActivity : AppCompatActivity() {
             addStudent.putExtra("message", "Insert");
             this.startActivity(addStudent);
         }
+    }
+
+    private fun getallStudents(it: List<Student>?, listStudent: ArrayList<Student>) {
+        listStudent.clear()
+            listStudent.addAll(it!!)
+            studenAdapter.notifyDataSetChanged()
+        Log.d("ListStudent2 " , "${listStudent.size}")
     }
 
 }

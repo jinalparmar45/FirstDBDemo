@@ -1,12 +1,13 @@
 package com.example.firstdbdemo
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 
 class StudentRepository(context : Context) {
     var db: StudentDAO? = AppDatabase.getInstance(context)?.StudentDAO()
 
-    fun getAllStudents() : List<Student>{
-        return db?.selectStudent() ?: listOf<Student>()
+    fun getAllStudents() : LiveData<List<Student>>? {
+        return db?.selectStudent()
     }
 
     fun insertStudent(Student: Student){

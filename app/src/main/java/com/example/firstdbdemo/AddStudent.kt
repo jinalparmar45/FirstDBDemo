@@ -8,11 +8,12 @@ import android.widget.Button
 import android.widget.EditText
 
 class AddStudent : AppCompatActivity() {
-    var repo = StudentRepository(this)
+    //var repo = StudentRepository(this)
+    lateinit var  vm : ViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_student)
-
+        vm = ViewModel(application)
         val addBTN : Button = findViewById(R.id.add)
         val fname :EditText = findViewById(R.id.fName)
         val lname :EditText = findViewById(R.id.lName)
@@ -35,12 +36,14 @@ class AddStudent : AppCompatActivity() {
                 Log.d("add student", " listener called")
 
                 val student = Student(  FName = fname.text.toString(), LName = lname.text.toString(), Grade = grade.text.toString())
-                repo.insertStudent(student)
+                //repo.insertStudent(student)
+                vm.insertstudents(student)
                 Log.d("add student", " listener called  ${fname.text.toString()}")
             }else{
 //StudentId= intent.getStringExtra("StudentID")?.toInt()
                 val student = Student( StudentId= intent.getStringExtra("StudentID")?.toInt(), FName = fname.text.toString(), LName = lname.text.toString(), Grade = grade.text.toString())
-                repo.updateStudent(student)
+                //repo.updateStudent(student)
+                vm.updatestudents(student)
             }
             var main = Intent(this, MainActivity::class.java)
             this.startActivity(main);

@@ -1,5 +1,6 @@
 package com.example.firstdbdemo
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
@@ -10,7 +11,8 @@ interface StudentDAO {
 
     //read
     @Query("select * from Student")
-    fun selectStudent():List<Student>
+    fun selectStudent(): LiveData<List<Student>>
+
 
     //update
     @Update
